@@ -267,8 +267,17 @@ namespace Nerdbank.GitVersioning.Tool
                     Console.WriteLine(JsonConvert.SerializeObject(oracle, Formatting.Indented));
                     break;
                 default:
-                    Console.Error.WriteLine("Unsupported format: {0}", format);
-                    return ExitCodes.UnsupportedFormat;
+                    try
+                    {
+                        var val = GetProperty(format, oracle);
+                        Console.WriteLine("{0}", val);
+                    }
+                    catch
+                    {
+                        Console.Error.WriteLine("Unsupported format or unknown version variable: {0}", format);
+                        return ExitCodes.UnsupportedFormat;
+                    }
+                    break;
             }
 
             return ExitCodes.OK;
@@ -570,5 +579,22 @@ namespace Nerdbank.GitVersioning.Tool
         }
 
         private static string[] CloudProviderNames => CloudBuild.SupportedCloudBuilds.Select(cb => cb.GetType().Name).ToArray();
+
+        private static string GetProperty(string name, object target)
+        {
+            string result = string.Empty;
+            var prop = target.GetType().GetProperty(name);
+            switch (prop.PropertyType.ToString())
+            {
+                case "System.Version":
+                    var ver = (Version)prop.GetValue(target);
+                    result = ver.ToString();
+                    break;
+                case "System.String":
+                    result = (string)prop.GetValue(target);
+                    break;
+            }
+            return result;
+        }
     }
 }
