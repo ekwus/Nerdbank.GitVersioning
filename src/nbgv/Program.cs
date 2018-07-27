@@ -70,7 +70,7 @@ namespace Nerdbank.GitVersioning.Tool
 
                 getVersion = syntax.DefineCommand("get-version", ref commandText, "Gets the version information for a project.");
                 syntax.DefineOption("p|project", ref projectPath, "The path to the project or project directory. The default is the current directory.");
-                syntax.DefineOption("f|format", ref format, $"The format to write the version information. Allowed values are: text, json. The default is {DefaultVersionInfoFormat}.");
+                syntax.DefineOption("f|format", ref format, $"The format to write the version information. Allowed values are: text, json or a version variable name. The default is {DefaultVersionInfoFormat}.");
                 syntax.DefineParameter("commit-ish", ref version, $"The commit/ref to get the version information for. The default is {DefaultRef}.");
 
                 setVersion = syntax.DefineCommand("set-version", ref commandText, "Updates the version stamp that is applied to a project.");
